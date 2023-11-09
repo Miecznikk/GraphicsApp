@@ -4,8 +4,9 @@ import java.awt.*;
 
 public class Triangle extends Drawable {
     private Polygon triangle;
-    public Triangle(Polygon triangle){
+    public Triangle(Polygon triangle, Color color){
         this.triangle = triangle;
+        this.color = color;
     }
     @Override
     public void draw(Graphics g){

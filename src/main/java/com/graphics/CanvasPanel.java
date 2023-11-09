@@ -21,6 +21,7 @@ public class CanvasPanel extends JPanel {
     private List<Drawable> drawables = new ArrayList<>();
     private Drawable selectedDrawable = null;
     private Point lastMousePosition = null;
+    private Color currentColor = Color.BLACK;
     private int startX = 0, startY = 0, endX = 0, endY = 0;
 
     private int liveStartX, liveStartY, liveEndX, liveEndY;
@@ -67,8 +68,9 @@ public class CanvasPanel extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 if (selectedDrawable != null) {
                     moveSelectedDrawable(e.getPoint());
+                } else if (selectedShape == ShapeType.PENCIL) {
+                    drawables.add(new DrawablePoint(e.getPoint(),currentColor));
                 } else {
-
                     liveEndX = e.getX();
                     liveEndY = e.getY();
                 }
@@ -100,25 +102,27 @@ public class CanvasPanel extends JPanel {
         if (selectedShape == ShapeType.TRIANGLE) {
             int[] xPoints = {liveStartX, (liveStartX + liveEndX) / 2, liveEndX};
             int[] yPoints = {liveEndY, liveStartY, liveEndY};
-            return new Triangle(new Polygon(xPoints, yPoints, 3));
+            return new Triangle(new Polygon(xPoints, yPoints, 3),currentColor);
         } else if (selectedShape == ShapeType.RECTANGLE) {
             int width = Math.abs(liveEndX - liveStartX);
             int height = Math.abs(liveEndY - liveStartY);
             int x = Math.min(liveStartX, liveEndX);
             int y = Math.min(liveStartY, liveEndY);
-            return new RectangleShape(new Rectangle(x, y, width, height));
+            return new RectangleShape(new Rectangle(x, y, width, height),currentColor);
         } else if (selectedShape == ShapeType.ELLIPSE) {
             int width = Math.abs(liveEndX - liveStartX);
             int height = Math.abs(liveEndY - liveStartY);
             int x = Math.min(liveStartX, liveEndX);
             int y = Math.min(liveStartY, liveEndY);
-            return new EllipseShape(new Ellipse2D.Double(x, y, width, height));
+            return new EllipseShape(new Ellipse2D.Double(x, y, width, height),currentColor);
         } else if (selectedShape == ShapeType.LINE) {
-            return new Line(startX, startY, liveEndX, liveEndY);
+            return new Line(startX, startY, liveEndX, liveEndY,currentColor);
         } else if (selectedShape == ShapeType.TEXT) {
             String initialText = "Sample Text";
             Font textFont = new Font("Arial", Font.BOLD, 24);
             return new TextField(initialText, startX, startY, textFont);
+        } else if (selectedShape == ShapeType.PENCIL) {
+            return new DrawablePoint(new Point(startX,startY),this.currentColor);
         }
 
         return null;
@@ -162,5 +166,13 @@ public class CanvasPanel extends JPanel {
         }catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public Color getCurrentColor() {
+        return currentColor;
+    }
+
+    public void setCurrentColor(Color color){
+        this.currentColor = color;
     }
 }

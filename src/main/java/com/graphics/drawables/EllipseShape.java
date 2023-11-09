@@ -6,8 +6,9 @@ import java.awt.geom.Ellipse2D;
 public class EllipseShape extends Drawable {
     private Ellipse2D ellipse;
 
-    public EllipseShape(Ellipse2D ellipse) {
+    public EllipseShape(Ellipse2D ellipse, Color color) {
         this.ellipse = ellipse;
+        this.color = color;
     }
 
     @Override

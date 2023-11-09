@@ -4,8 +4,9 @@ import java.awt.*;
 
 public class RectangleShape extends Drawable {
     private Rectangle rectangle;
-    public RectangleShape(Rectangle rectangle){
+    public RectangleShape(Rectangle rectangle, Color color){
         this.rectangle = rectangle;
+        this.color = color;
     }
     @Override
     public void draw(Graphics g){

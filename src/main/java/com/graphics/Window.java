@@ -7,7 +7,7 @@ public class Window {
     public Window() {
         JFrame frame = new JFrame("GIGA PAINT");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(850, 600);
         frame.setResizable(false);
 
         CanvasPanel canvasPanel = new CanvasPanel();

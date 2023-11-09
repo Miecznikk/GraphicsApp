@@ -5,5 +5,6 @@ public enum ShapeType {
     RECTANGLE,
     ELLIPSE,
     LINE,
-    TEXT
+    TEXT,
+    PENCIL
 }

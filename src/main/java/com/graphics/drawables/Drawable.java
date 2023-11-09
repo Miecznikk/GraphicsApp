@@ -4,9 +4,7 @@ import java.awt.*;
 
 public abstract class Drawable {
     protected Color color = Color.BLACK;
-    public void draw(Graphics g){
-
-    }
+    public abstract void draw(Graphics g);
 
     public abstract boolean contains(Point point);
 
