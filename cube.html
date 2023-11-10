@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Cube</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<script>
+    const COLOR_BG = "black";
+    const SPEED_X = 0.005;
+    const SPEED_Y = 0.01;
+    const SPEED_Z = 0.007;
+    const POINT3D = function(x, y, z) { this.x = x; this.y = y; this.z = z; };
+
+
+    var canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+
+
+    var h = document.documentElement.clientHeight;
+    var w = document.documentElement.clientWidth;
+    canvas.height = h;
+    canvas.width = w;
+
+    var cx = w / 2;
+    var cy = h / 2;
+    var cz = 0;
+    var size = h / 4;
+    var vertices = [
+        new POINT3D(cx - size, cy - size, cz - size),
+        new POINT3D(cx + size, cy - size, cz - size),
+        new POINT3D(cx + size, cy + size, cz - size),
+        new POINT3D(cx - size, cy + size, cz - size),
+        new POINT3D(cx - size, cy - size, cz + size),
+        new POINT3D(cx + size, cy - size, cz + size),
+        new POINT3D(cx + size, cy + size, cz + size),
+        new POINT3D(cx - size, cy + size, cz + size)
+    ];
+    var edges = [
+        [0, 1], [1, 2], [2, 3], [3, 0],
+        [4, 5], [5, 6], [6, 7], [7, 4],
+        [0, 4], [1, 5], [2, 6], [3, 7]
+    ];
+
+
+    var isDragging = false;
+    var prevMousePos = { x: 0, y: 0 };
+
+    canvas.addEventListener('mousedown', function (e) {
+        isDragging = true;
+        prevMousePos = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('mousemove', function (e) {
+        if (isDragging) {
+            var dx = e.clientX - prevMousePos.x;
+            var dy = e.clientY - prevMousePos.y;
+
+            rotateCube(dx, dy);
+
+            prevMousePos = { x: e.clientX, y: e.clientY };
+        }
+    });
+
+    canvas.addEventListener('mouseup', function () {
+        isDragging = false;
+    });
+
+    function rotateCube(dx, dy) {
+        let angleX = dx * 0.01 * SPEED_X * Math.PI;
+        for (let v of vertices) {
+            let dy = v.y - cy;
+            let dz = v.z - cz;
+            let y = dy * Math.cos(angleX) - dz * Math.sin(angleX);
+            let z = dy * Math.sin(angleX) + dz * Math.cos(angleX);
+            v.y = y + cy;
+            v.z = z + cz;
+        }
+
+        let angleY = dy * 0.01 * SPEED_Y * Math.PI;
+        for (let v of vertices) {
+            let dx = v.x - cx;
+            let dz = v.z - cz;
+            let x = dz * Math.sin(angleY) + dx * Math.cos(angleY);
+            let z = dz * Math.cos(angleY) - dx * Math.sin(angleY);
+            v.x = x + cx;
+            v.z = z + cz;
+        }
+    }
+
+    var timeDelta, timeLast = 0;
+    requestAnimationFrame(loop);
+
+    function loop(timeNow) {
+
+        timeDelta = timeNow - timeLast;
+        timeLast = timeNow;
+
+        ctx.fillRect(0, 0, w, h);
+
+        let angleZ = timeDelta * 0.001 * SPEED_Z * Math.PI * 2;
+        for (let v of vertices) {
+            let dx = v.x - cx;
+            let dy = v.y - cy;
+            let x = dx * Math.cos(angleZ) - dy * Math.sin(angleZ);
+            let y = dx * Math.sin(angleZ) + dy * Math.cos(angleZ);
+            v.x = x + cx;
+            v.y = y + cy;
+        }
+
+        for (let edge of edges) {
+            let color1 = getColor(vertices[edge[0]]);
+            let color2 = getColor(vertices[edge[1]]);
+
+            let gradient = ctx.createLinearGradient(vertices[edge[0]].x, vertices[edge[0]].y, vertices[edge[1]].x, vertices[edge[1]].y);
+            gradient.addColorStop(0, `rgb(${color1.r},${color1.g},${color1.b})`);
+            gradient.addColorStop(1, `rgb(${color2.r},${color2.g},${color2.b})`);
+
+            ctx.strokeStyle = gradient;
+
+            // draw edge
+            ctx.beginPath();
+            ctx.moveTo(vertices[edge[0]].x, vertices[edge[0]].y);
+            ctx.lineTo(vertices[edge[1]].x, vertices[edge[1]].y);
+            ctx.stroke();
+        }
+
+        requestAnimationFrame(loop);
+    }
+
+    function getColor(vertex) {
+        let normalizedX = (vertex.x - (cx - size)) / (2 * size);
+        let normalizedY = (vertex.y - (cy - size)) / (2 * size);
+        let normalizedZ = (vertex.z - (cz - size)) / (2 * size);
+
+        let r = Math.round(255 * normalizedX);
+        let g = Math.round(255 * normalizedY);
+        let b = Math.round(255 * normalizedZ);
+
+        return { r, g, b };
+    }
+</script>
+</body>
+</html>

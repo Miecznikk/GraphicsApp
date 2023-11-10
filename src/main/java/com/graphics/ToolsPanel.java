@@ -10,6 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class ToolsPanel extends JPanel {
     private CanvasPanel canvas;
@@ -33,12 +37,19 @@ public class ToolsPanel extends JPanel {
         JButton textButton = new JButton("Text");
         JButton saveButton = new JButton("Save image");
         JButton resetButton = new JButton("Reset");
+        JButton cubeButton = new JButton("RGB Cube");
         JPanel pickersPanel = new JPanel();
         JPanel colorPanel = new JPanel();
         pickersPanel.setBackground(Color.LIGHT_GRAY);
         colorPanel.setPreferredSize(new Dimension(30,30));
         colorPanel.setBackground(this.canvas.getCurrentColor());
 
+        cubeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openWebpage("cube.html");
+            }
+        });
         colorRgbPickButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -98,5 +109,16 @@ public class ToolsPanel extends JPanel {
         pickersPanel.add(colorCmykPickButton);
         add(pickersPanel);
         add(colorPanel);
+        add(cubeButton);
+    }
+
+    private static void openWebpage(String filePath) {
+        try {
+            File file = new File(filePath);
+            URI uri = file.toURI();
+            Desktop.getDesktop().browse(uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
