@@ -1,5 +1,6 @@
 package com.graphics;
 
+import com.graphics.ImageLoader.ImageLoader;
 import com.graphics.drawables.*;
 import com.graphics.drawables.TextField;
 import com.graphics.drawables.utils.ShapeType;
@@ -11,13 +12,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasPanel extends JPanel {
-    private ShapeType selectedShape = ShapeType.TRIANGLE;
+    private ShapeType selectedShape = ShapeType.PENCIL;
     private List<Drawable> drawables = new ArrayList<>();
     private Drawable selectedDrawable = null;
     private Point lastMousePosition = null;
@@ -155,10 +158,33 @@ public class CanvasPanel extends JPanel {
     }
 
     public void saveImageToFile(String filePath){
+        String ppmFilePath = "image.ppm";
         BufferedImage image = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = image.createGraphics();
         paint(g2d);
         g2d.dispose();
+        try(FileWriter fileWriter = new FileWriter(ppmFilePath);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)){
+            bufferedWriter.write("P3");
+            bufferedWriter.newLine();
+            bufferedWriter.write(image.getWidth() + " " + image.getHeight());
+            bufferedWriter.newLine();
+            bufferedWriter.write("255");
+            bufferedWriter.newLine();
+            for (int y = 0; y < image.getHeight(); y++){
+                for (int x=0; x< image.getWidth(); x++){
+                    int rgb = image.getRGB(x, y);
+
+                    int red = (rgb >> 16) & 0xFF;
+                    int green = (rgb >> 8) & 0xFF;
+                    int blue = rgb & 0xFF;
+                    bufferedWriter.write(red + " " + green + " " + blue + " ");
+                }
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
 
         try{
             ImageIO.write(image, "png", new File(filePath));
@@ -174,5 +200,11 @@ public class CanvasPanel extends JPanel {
 
     public void setCurrentColor(Color color){
         this.currentColor = color;
+    }
+
+    public void loadImageFromFile(String selectedFilePath) {
+        new Thread(()->{
+            ImageLoader.prepareCanvasAndDraw(selectedFilePath,1);
+        }).start();
     }
 }

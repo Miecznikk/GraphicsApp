@@ -7,6 +7,7 @@ import com.graphics.drawables.utils.ShapeButtonListener;
 import com.graphics.drawables.utils.ShapeType;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,8 +35,8 @@ public class ToolsPanel extends JPanel {
         JButton colorRgbPickButton = new JButton("RGB");
         JButton colorHsvPickButton = new JButton("HSV");
         JButton colorCmykPickButton = new JButton("CMYK");
-        JButton textButton = new JButton("Text");
         JButton saveButton = new JButton("Save image");
+        JButton loadButton = new JButton("Load image");
         JButton resetButton = new JButton("Reset");
         JButton cubeButton = new JButton("RGB Cube");
         JPanel pickersPanel = new JPanel();
@@ -48,6 +49,12 @@ public class ToolsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 openWebpage("cube.html");
+            }
+        });
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showFileChooser();
             }
         });
         colorRgbPickButton.addActionListener(new ActionListener() {
@@ -88,7 +95,6 @@ public class ToolsPanel extends JPanel {
         ellipseButton.addActionListener(new ShapeButtonListener(canvas, ShapeType.ELLIPSE));
         lineButton.addActionListener(new ShapeButtonListener(canvas, ShapeType.LINE));
         freeDrawButton.addActionListener(new ShapeButtonListener(canvas, ShapeType.PENCIL));
-        textButton.addActionListener(new ShapeButtonListener(canvas,ShapeType.TEXT));
         saveButton.addActionListener(e ->{
             this.canvas.saveImageToFile("image.png");
         });
@@ -101,8 +107,8 @@ public class ToolsPanel extends JPanel {
         add(ellipseButton);
         add(lineButton);
         add(freeDrawButton);
-        add(textButton);
         add(saveButton);
+        add(loadButton);
         add(resetButton);
         pickersPanel.add(colorRgbPickButton);
         pickersPanel.add(colorHsvPickButton);
@@ -119,6 +125,28 @@ public class ToolsPanel extends JPanel {
             Desktop.getDesktop().browse(uri);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    private void showFileChooser() {
+        JFileChooser fileChooser = new JFileChooser();
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "pbm", "pgm", "ppm");
+        fileChooser.setFileFilter(filter);
+
+        int returnValue = fileChooser.showOpenDialog(this);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            // User selected a file
+            String selectedFilePath = fileChooser.getSelectedFile().getAbsolutePath();
+            System.out.println("Selected File: " + selectedFilePath);
+            // Perform further actions with the file path as needed
+
+            // For example, you might want to load the image into the canvas
+            // You can call a method in your CanvasPanel class to handle this
+            canvas.loadImageFromFile(selectedFilePath);
+        } else {
+            // User canceled the file chooser
+            System.out.println("File selection canceled.");
         }
     }
 }
