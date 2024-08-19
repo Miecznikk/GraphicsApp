@@ -1,0 +1,39 @@
+pipeline:
+  name: test
+  identifier: test
+  projectIdentifier: Default_Project
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github_OAuth_1724082727901
+        repoName: Miecznikk/GraphicsApp
+        build: <+input>
+  stages:
+    - stage:
+        name: BUILD
+        identifier: BUILD
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: GitClone
+                  name: GitClone_1
+                  identifier: GitClone_1
+                  spec:
+                    connectorRef: account.Github_OAuth_1724082727901
+                    repoName: https://github.com/Miecznikk/GraphicsApp
+                    build:
+                      type: branch
+                      spec:
+                        branch: main
