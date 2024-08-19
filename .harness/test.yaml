@@ -32,7 +32,7 @@ pipeline:
                   identifier: GitClone_1
                   spec:
                     connectorRef: account.Github_OAuth_1724082727901
-                    repoName: https://github.com/Miecznikk/GraphicsApp
+                    repoName: Miecznikk/GraphicsApp
                     build:
                       type: branch
                       spec:
