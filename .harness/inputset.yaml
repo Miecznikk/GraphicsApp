@@ -1,0 +1,11 @@
+inputSet:
+  name: inputset
+  identifier: inputset
+  orgIdentifier: default
+  projectIdentifier: Default_Project
+  pipeline:
+    identifier: test
+    properties:
+      ci:
+        codebase:
+          build: <+input>
