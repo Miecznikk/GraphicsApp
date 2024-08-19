@@ -1,0 +1,35 @@
+pipeline:
+  identifier: Build_Miecznikk_GraphicsApp_1724083006261
+  name: Build GraphicsApp
+  orgIdentifier: default
+  projectIdentifier: Default_Project
+  properties:
+    ci:
+      codebase:
+        build: <+input>
+        connectorRef: account.Github_OAuth_1724082727901
+        repoName: Miecznikk/GraphicsApp
+  stages:
+    - stage:
+        identifier: build
+        name: build
+        spec:
+          caching:
+            enabled: true
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  identifier: echo
+                  name: echo
+                  spec:
+                    command: echo hello world
+                  timeout: ""
+                  type: Run
+          platform:
+            arch: Amd64
+            os: Linux
+          runtime:
+            spec: {}
+            type: Cloud
+        type: CI
