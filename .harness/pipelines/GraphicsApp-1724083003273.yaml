@@ -3,33 +3,36 @@ pipeline:
   name: Build GraphicsApp
   orgIdentifier: default
   projectIdentifier: Default_Project
-  properties:
-    ci:
-      codebase:
-        build: <+input>
-        connectorRef: account.Github_OAuth_1724082727901
-        repoName: Miecznikk/GraphicsApp
   stages:
     - stage:
-        identifier: build
         name: build
+        identifier: build
+        description: ""
+        type: CI
         spec:
-          caching:
-            enabled: true
           cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
           execution:
             steps:
               - step:
-                  identifier: echo
-                  name: echo
+                  type: GitClone
+                  name: GitClone_1
+                  identifier: GitClone_1
                   spec:
-                    command: echo hello world
-                  timeout: ""
-                  type: Run
-          platform:
-            arch: Amd64
-            os: Linux
-          runtime:
-            spec: {}
-            type: Cloud
-        type: CI
+                    connectorRef: account.Github_OAuth_1724082727901
+                    repoName: Miecznikk/GraphicsApp
+                    build:
+                      type: branch
+                      spec:
+                        branch: main
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github_OAuth_1724082727901
+        repoName: Miecznik/GraphicsApp
+        build: <+input>
